@@ -126,6 +126,7 @@ const userSchema = new mongoose.Schema(
                     ref: 'Post',
                 },
                 savedAt: {
+                    type: Date,
                     default: new Date(),
                 },
             },

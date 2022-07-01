@@ -1,3 +1,5 @@
+const User = require('../models/User')
+
 exports.validateEmail = (email) => {
     return String(email)
         .toLowerCase()
@@ -9,4 +11,26 @@ exports.validateLength = (text, min, max) => {
         return false
     }
     return true
+}
+
+exports.validateUsername = async (username) => {
+    let flag = false
+    do {
+        let check = await User.findOne({ username })
+        if (check) {
+            //change username
+
+            // OVER-ENGINEERED
+            // number of milliseconds 1 Jan 1970 Unix date system start
+            // multiplied with random to make more space between invoked functions
+            // username += +new Date() * Math.random().toString().substring(0, 1)
+
+            // standard random 1-99
+            username += Math.floor(Math.random() * 99) + 1
+            flag = true
+        } else {
+            flag = false
+        }
+    } while (flag)
+    return username
 }

@@ -1,23 +1,30 @@
 const express = require('express');
-require('dotenv').config()
 const cors = require('cors')
-const port = process.env.PORT || 8000;
 const app = express();
+require('dotenv').config()
+const {readdirSync} = require('fs')
+const mongoose = require('mongoose')
 
 
+app.use(express.json())
 
-
+// CORS for allowed clients
 app.use(cors({origin:"http://localhost:3000"}))
 
-app.get("/", async (req, res) => {
-    res.status(200).send("Works")
+
+//ROUTES
+// mapping through folder routes and adding routes as middleware
+readdirSync("./routes").map((route)=> app.use("/",require("./routes/" + route)))
+
+//DATABASE
+mongoose.connect(process.env.DATABASE_URL, {
+    useNewUrlParser:true
 })
-
-app.get("/books", async (req, res) => {
-    res.status(200).send("books")
-})
+    .then(()=>console.log( "Database connected successfully"))
+    .catch((err)=>console.log("Error connecting to mongoDB", err))
 
 
+const port = process.env.PORT || 8000;
 app.listen(port, () => {
     console.log(`Server is listening on port: ${port}...`)
 })

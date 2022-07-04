@@ -41,5 +41,3 @@ width:300px;padding:10px 15px;background:darkgreen;color:white;text-decoration:n
         return res
     })
 }
-
-//TODO DO AGAIN Google Clout OAuth2.0 access tokens and all setups and change ENV to new ones

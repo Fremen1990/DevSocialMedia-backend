@@ -4,13 +4,13 @@ const app = express()
 require('dotenv').config()
 const { readdirSync } = require('fs')
 const mongoose = require('mongoose')
-const { config } = require('./config/config.example')
+const config = require('./config/config.example')
 
 app.use(express.json())
 
 // CORS for allowed clients
-// app.use(cors())
-app.use(cors({ origin: config.corsOrigin }))
+app.use(cors())
+// app.use(cors({ origin: config.corsOrigin }))
 
 //ROUTES
 // mapping through folder routes and adding routes as middleware

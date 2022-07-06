@@ -98,9 +98,20 @@ exports.register = async (req, res) => {
 
 exports.activateAccount = async (req, res) => {
     try {
+        const validUser = req.user.id
         const { token } = req.body
         const user = jwt.verify(token, process.env.TOKEN_SECRET)
         const check = await User.findById(user.id)
+
+        //Check if token user is the same as the user in the database(second layer of security)
+        if (validUser !== user.id) {
+            return res.status(400).json({
+                message:
+                    'You do not have the authorization to complete this operation',
+            })
+        }
+
+        //Activation check
         if (check.verified === true) {
             return res
                 .status(400)
@@ -151,6 +162,25 @@ exports.login = async (req, res) => {
     }
 }
 
-exports.auth = (req, res) => {
-    res.json('Welcome from auth')
+exports.sendVerificationEmail = async (req, res) => {
+    try {
+        const id = req.user.id
+        const user = await User.findById(id)
+        if (user.verified === true) {
+            return res
+                .status(400)
+                .json({ message: 'This user is already activated' })
+        }
+        const emailVerificationToken = generateToken(
+            { id: user._id.toString() },
+            '30m'
+        )
+        const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}`
+        sendVerificationEmail(user.email, user.first_name, url)
+        return res
+            .status(200)
+            .json({ message: 'Verification email has been sent' })
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
 }

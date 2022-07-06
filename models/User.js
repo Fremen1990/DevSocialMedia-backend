@@ -34,7 +34,8 @@ const userSchema = new mongoose.Schema(
         },
         picture: {
             type: String,
-            // default: here paste default link to "noPicture" image from cloud
+            default:
+                'https://www.clipartmax.com/png/full/31-313897_avatar-contact-default-starwars-user-yoda-icon-star-wars-yoda-silhouette-transparent.png',
         },
         cover: {
             type: String,

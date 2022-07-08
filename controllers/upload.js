@@ -52,3 +52,23 @@ const removeTmp = (path) => {
         if (err) throw err
     })
 }
+
+exports.listImages = async (req, res) => {
+    const { path, sort, max } = req.body
+
+    cloudinary.v2.search
+        .expression(`${path}`)
+        .sort_by('public_id', sort)
+        .max_results(max)
+        .execute()
+        .then((result) => {
+            res.json(result)
+        })
+        .catch((err) => {
+            console.log(err.error.message)
+        })
+    try {
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+}

@@ -84,7 +84,7 @@ exports.register = async (req, res) => {
 
         res.send({
             id: user._id,
-            username: user.newUsername,
+            username: user.username,
             picture: user.picture,
             first_name: user.first_name,
             last_name: user.last_name,
@@ -251,6 +251,16 @@ exports.changePassword = async (req, res) => {
         return res
             .status(200)
             .json({ message: 'Password changed successfully' })
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+}
+
+exports.getProfile = async (req, res) => {
+    try {
+        const { username } = req.params
+        const profile = await User.find({ username }).select('-password')
+        res.json(profile)
     } catch (error) {
         res.status(500).json({ message: error.message })
     }

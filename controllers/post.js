@@ -11,10 +11,9 @@ exports.createPost = async (req, res) => {
 exports.getAllPosts = async (req, res) => {
     try {
         // `populate` is making relation between ObjectID in record and related object
-        const posts = await Post.find().populate(
-            'user',
-            'first_name last_name picture username gender'
-        )
+        const posts = await Post.find()
+            .populate('user', 'first_name last_name picture username gender')
+            .sort({ createdAt: 'desc' })
         res.json(posts)
     } catch (error) {
         res.status(500).json({ message: error.message })

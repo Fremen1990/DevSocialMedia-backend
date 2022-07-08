@@ -4,16 +4,18 @@ const app = express()
 require('dotenv').config()
 const { readdirSync } = require('fs')
 const mongoose = require('mongoose')
+const fileUpload = require('express-fileupload')
 const config = require('./config/config.example')
 
 app.use(express.json())
 
 // CORS for allowed clients
 app.use(cors())
-// app.use(cors({ origin: config.corsOrigin }))
+
+app.use(fileUpload({ useTempFiles: true }))
 
 //ROUTES
-// mapping through folder routes and adding routes as middleware
+// mapping through folder routes and adding routes from map
 readdirSync('./routes').map((route) =>
     app.use('/', require('./routes/' + route))
 )

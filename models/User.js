@@ -39,6 +39,8 @@ const userSchema = new mongoose.Schema(
         },
         cover: {
             type: String,
+            default:
+                'https://res.cloudinary.com/dnl38emxv/image/upload/v1657537385/TomaszStanisz/cover_pictures/agggfagg6otyr7fxko3f.jpg',
         },
         gender: {
             type: String,
@@ -59,22 +61,30 @@ const userSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
-        friends: {
-            type: Array,
-            default: [],
-        },
-        following: {
-            type: Array,
-            default: [],
-        },
-        followers: {
-            type: Array,
-            default: [],
-        },
-        requests: {
-            type: Array,
-            default: [],
-        }, // user search history
+        friends: [
+            {
+                type: ObjectId,
+                ref: 'User',
+            },
+        ],
+        following: [
+            {
+                type: ObjectId,
+                ref: 'User',
+            },
+        ],
+        followers: [
+            {
+                type: ObjectId,
+                ref: 'User',
+            },
+        ],
+        requests: [
+            {
+                type: ObjectId,
+                ref: 'User',
+            },
+        ],
         search: {
             user: {
                 type: mongoose.Schema.ObjectId,

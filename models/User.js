@@ -85,12 +85,14 @@ const userSchema = new mongoose.Schema(
                 ref: 'User',
             },
         ],
-        search: {
-            user: {
-                type: mongoose.Schema.ObjectId,
-                ref: 'User',
+        search: [
+            {
+                user: {
+                    type: ObjectId,
+                    ref: 'User',
+                },
             },
-        },
+        ],
         details: {
             bio: {
                 type: String,

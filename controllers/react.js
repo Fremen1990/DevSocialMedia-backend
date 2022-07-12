@@ -80,7 +80,6 @@ exports.getReacts = async (req, res) => {
         const checkSaved = user?.savedPosts.find(
             (x) => x.post.toString() === req.params.id
         )
-        console.log(checkSaved)
         res.json({
             reacts,
             check: check?.react,

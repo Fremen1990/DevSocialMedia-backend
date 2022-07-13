@@ -3,6 +3,7 @@ const {
     register,
     activateAccount,
     login,
+    getAllUsers,
     sendVerificationEmail,
     findUser,
     sendResetPasswordCode,
@@ -31,6 +32,7 @@ const router = express.Router()
 router.post('/register', register)
 router.post('/activate', authUser, activateAccount)
 router.post('/login', login)
+router.get('/getAllUsers', getAllUsers)
 router.post('/findUser', findUser)
 router.post('/sendVerification', authUser, sendVerificationEmail)
 router.post('/sendResetPasswordCode', sendResetPasswordCode)

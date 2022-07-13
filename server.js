@@ -15,9 +15,15 @@ app.use(cors())
 app.use(fileUpload({ useTempFiles: true }))
 
 //ROUTES
+app.get('/api', async (req, res) => {
+    res.status(200).json({
+        message:
+            'Welcome to my DevSocialMedia API!! All routes restricted with authorization :)',
+    })
+})
 // mapping through folder routes and adding routes from map
 readdirSync('./routes').map((route) =>
-    app.use('/', require('./routes/' + route))
+    app.use('/api', require('./routes/' + route))
 )
 
 //DATABASE

@@ -1,14 +1,15 @@
-const cloudinary = require('cloudinary')
-const fs = require('fs')
-const { getTempFilename } = require('express-fileupload/lib/utilities')
+import { getTempFilename } from 'express-fileupload/lib/utilities.js'
+import fs from 'fs'
+import cloudinary from 'cloudinary'
 
+// @ts-ignore
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
     api_key: process.env.CLOUD_API_KEY,
     api_secret: process.env.CLOUD_API_SECRET,
 })
 
-exports.uploadImages = async (req, res) => {
+export const uploadImages = async (req, res) => {
     try {
         const { path } = req.body
         console.log('PATH', path)
@@ -17,6 +18,7 @@ exports.uploadImages = async (req, res) => {
         for (const file of files) {
             const url = await uploadToCloudinary(file, path)
             images.push(url)
+            // @ts-ignore
             removeTmp(file.tempFilePath)
         }
 
@@ -35,6 +37,7 @@ const uploadToCloudinary = async (file, path) => {
             },
             (err, res) => {
                 if (err) {
+                    // @ts-ignore
                     removeTmp(file, tempFilePath)
                     return res
                         .status(400)
@@ -53,7 +56,7 @@ const removeTmp = (path) => {
     })
 }
 
-exports.listImages = async (req, res) => {
+export const listImages = async (req, res) => {
     try {
         const { path, sort, max } = req.body
 

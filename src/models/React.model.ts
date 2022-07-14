@@ -1,5 +1,6 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
+// @ts-ignore
 const { ObjectId } = mongoose.Schema
 
 const reactSchema = new mongoose.Schema({
@@ -18,4 +19,4 @@ const reactSchema = new mongoose.Schema({
     },
 })
 
-module.exports = mongoose.model('React', reactSchema)
+export default mongoose.model('React', reactSchema)

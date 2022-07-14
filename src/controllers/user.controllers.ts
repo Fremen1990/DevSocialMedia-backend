@@ -1,19 +1,20 @@
-const User = require('../models/User')
-const Code = require('../models/Code')
-const Post = require('../models/Post')
-const {
+import mongoose from 'mongoose'
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
+import User from '../models/User.model'
+import Code from '../models/Code.model'
+import Post from '../models/Post.model'
+import {
     validateEmail,
     validateLength,
     validateUsername,
-} = require('../helpers/validation')
-const bcrypt = require('bcrypt')
-const { generateToken } = require('../helpers/tokens')
-const { sendVerificationEmail, sendResetCode } = require('../helpers/mailer')
-const jwt = require('jsonwebtoken')
-const generateCode = require('../helpers/generateCode')
-const mongoose = require('mongoose')
+} from '../helpers/validation'
+import { generateToken } from '../helpers/tokens'
 
-exports.register = async (req, res) => {
+import { sendVerificationEmailHelper, sendResetCode } from '../helpers/mailer'
+import { generateCode } from '../helpers/generateCode'
+
+export const register = async (req, res) => {
     try {
         const {
             first_name,
@@ -81,7 +82,7 @@ exports.register = async (req, res) => {
 
         //verification url for new user
         const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}`
-        sendVerificationEmail(user.email, user.first_name, url)
+        sendVerificationEmailHelper(user.email, user.first_name, url)
         const token = generateToken({ id: user._id.toString() }, '7d')
 
         res.send({
@@ -99,14 +100,16 @@ exports.register = async (req, res) => {
     }
 }
 
-exports.activateAccount = async (req, res) => {
+export const activateAccount = async (req, res) => {
     try {
         const validUser = req.user.id
         const { token } = req.body
         const user = jwt.verify(token, process.env.TOKEN_SECRET)
+        // @ts-ignore
         const check = await User.findById(user.id)
 
         //Check if token user is the same as the user in the database(second layer of security)
+        // @ts-ignore
         if (validUser !== user.id) {
             return res.status(400).json({
                 message:
@@ -120,6 +123,7 @@ exports.activateAccount = async (req, res) => {
                 .status(400)
                 .json({ message: 'This user is already activated' })
         } else {
+            // @ts-ignore
             await User.findByIdAndUpdate(user.id, { verified: true })
             return res
                 .status(200)
@@ -130,7 +134,7 @@ exports.activateAccount = async (req, res) => {
     }
 }
 
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
     try {
         const { email, password } = req.body
         const user = await User.findOne({ email })
@@ -165,7 +169,7 @@ exports.login = async (req, res) => {
     }
 }
 
-exports.getAllUsers = async (req, res) => {
+export const getAllUsers = async (req, res) => {
     try {
         const users = await User.find().select(
             'username first_name last_name picture'
@@ -181,7 +185,7 @@ exports.getAllUsers = async (req, res) => {
     }
 }
 
-exports.sendVerificationEmail = async (req, res) => {
+export const sendVerificationEmail = async (req, res) => {
     try {
         const id = req.user.id
         const user = await User.findById(id)
@@ -195,7 +199,7 @@ exports.sendVerificationEmail = async (req, res) => {
             '30m'
         )
         const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}`
-        sendVerificationEmail(user.email, user.first_name, url)
+        sendVerificationEmailHelper(user.email, user.first_name, url)
         return res
             .status(200)
             .json({ message: 'Verification email has been sent' })
@@ -204,7 +208,7 @@ exports.sendVerificationEmail = async (req, res) => {
     }
 }
 
-exports.findUser = async (req, res) => {
+export const findUser = async (req, res) => {
     try {
         const { email } = req.body
         const user = await User.findOne({ email }).select('-password')
@@ -220,7 +224,7 @@ exports.findUser = async (req, res) => {
     }
 }
 
-exports.sendResetPasswordCode = async (req, res) => {
+export const sendResetPasswordCode = async (req, res) => {
     try {
         const { email } = req.body
         const user = await User.findOne({ email }).select('-password')
@@ -238,8 +242,7 @@ exports.sendResetPasswordCode = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-
-exports.validateResetCode = async (req, res) => {
+export const validateResetCode = async (req, res) => {
     try {
         const { email, code } = req.body
         const user = await User.findOne({ email })
@@ -254,8 +257,7 @@ exports.validateResetCode = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-
-exports.changePassword = async (req, res) => {
+export const changePassword = async (req, res) => {
     try {
         const { email, password } = req.body
 
@@ -273,8 +275,7 @@ exports.changePassword = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-
-exports.getProfile = async (req, res) => {
+export const getProfile = async (req, res) => {
     try {
         const { username } = req.params
         const user = await User.findById(req.user.id)
@@ -321,8 +322,7 @@ exports.getProfile = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-
-exports.updateProfilePicture = async (req, res) => {
+export const updateProfilePicture = async (req, res) => {
     try {
         const { url } = req.body
 
@@ -334,8 +334,7 @@ exports.updateProfilePicture = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-
-exports.updateCover = async (req, res) => {
+export const updateCover = async (req, res) => {
     try {
         const { url } = req.body
 
@@ -347,8 +346,7 @@ exports.updateCover = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-
-exports.updateDetails = async (req, res) => {
+export const updateDetails = async (req, res) => {
     try {
         const { infos } = req.body
         const updated = await User.findByIdAndUpdate(
@@ -365,8 +363,7 @@ exports.updateDetails = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-
-exports.addFriend = async (req, res) => {
+export const addFriend = async (req, res) => {
     try {
         if (req.user.id !== req.params.id) {
             const sender = await User.findById(req.user.id)
@@ -397,7 +394,7 @@ exports.addFriend = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-exports.cancelRequest = async (req, res) => {
+export const cancelRequest = async (req, res) => {
     try {
         if (req.user.id !== req.params.id) {
             const sender = await User.findById(req.user.id)
@@ -428,7 +425,7 @@ exports.cancelRequest = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-exports.follow = async (req, res) => {
+export const follow = async (req, res) => {
     try {
         if (req.user.id !== req.params.id) {
             const sender = await User.findById(req.user.id)
@@ -457,7 +454,7 @@ exports.follow = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-exports.unfollow = async (req, res) => {
+export const unfollow = async (req, res) => {
     try {
         if (req.user.id !== req.params.id) {
             const sender = await User.findById(req.user.id)
@@ -488,7 +485,7 @@ exports.unfollow = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-exports.acceptRequest = async (req, res) => {
+export const acceptRequest = async (req, res) => {
     try {
         if (req.user.id !== req.params.id) {
             const receiver = await User.findById(req.user.id)
@@ -516,7 +513,7 @@ exports.acceptRequest = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-exports.unfriend = async (req, res) => {
+export const unfriend = async (req, res) => {
     try {
         if (req.user.id !== req.params.id) {
             const sender = await User.findById(req.user.id)
@@ -553,7 +550,7 @@ exports.unfriend = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-exports.deleteRequest = async (req, res) => {
+export const deleteRequest = async (req, res) => {
     try {
         if (req.user.id !== req.params.id) {
             const receiver = await User.findById(req.user.id)
@@ -584,7 +581,7 @@ exports.deleteRequest = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-exports.search = async (req, res) => {
+export const search = async (req, res) => {
     try {
         const searchTerm = req.params.searchTerm
         const results = await User.find({
@@ -595,7 +592,7 @@ exports.search = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-exports.addToSearchHistory = async (req, res) => {
+export const addToSearchHistory = async (req, res) => {
     try {
         const { searchUser } = req.body
         const search = {
@@ -603,11 +600,13 @@ exports.addToSearchHistory = async (req, res) => {
             createdAt: new Date(),
         }
         const user = await User.findById(req.user.id)
+        // @ts-ignore
         const check = user.search.find((x) => x.user.toString() === searchUser)
         if (check) {
             await User.updateOne(
                 {
                     _id: req.user.id,
+                    // @ts-ignore
                     'search._id': check._id,
                 },
                 {
@@ -625,7 +624,7 @@ exports.addToSearchHistory = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-exports.getSearchHistory = async (req, res) => {
+export const getSearchHistory = async (req, res) => {
     try {
         const results = await User.findById(req.user.id)
             .select('search')
@@ -635,7 +634,7 @@ exports.getSearchHistory = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-exports.removeFromSearch = async (req, res) => {
+export const removeFromSearch = async (req, res) => {
     try {
         const { searchUser } = req.body
         await User.updateOne(
@@ -648,14 +647,14 @@ exports.removeFromSearch = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-
-exports.getFriendsPageInfos = async (req, res) => {
+export const getFriendsPageInfos = async (req, res) => {
     try {
         const user = await User.findById(req.user.id)
             .select('friends requests')
             .populate('friends', 'first_name last_name picture username')
             .populate('requests', 'first_name last_name picture username')
         const sentRequests = await User.find({
+            // @ts-ignore
             requests: mongoose.Types.ObjectId(req.user.id),
         }).select('first_name last_name picture username')
         res.json({

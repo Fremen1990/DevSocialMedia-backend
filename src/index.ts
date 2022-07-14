@@ -1,11 +1,13 @@
-const express = require('express')
-const cors = require('cors')
+import express from 'express'
+import cors from 'cors'
+import userRoutes from './routes/user.routes'
+import mongoose from 'mongoose'
+import 'dotenv/config'
+import fileUpload from 'express-fileupload'
+import postRoutes from './routes/post.routes'
+import reactRoutes from './routes/react.routes'
+import uploadRoutes from './routes/upload.routes'
 const app = express()
-require('dotenv').config()
-const { readdirSync } = require('fs')
-const mongoose = require('mongoose')
-const fileUpload = require('express-fileupload')
-const config = require('./config/config.example')
 
 app.use(express.json())
 
@@ -21,20 +23,24 @@ app.get('/api', async (req, res) => {
             'Welcome to my DevSocialMedia API!! All routes restricted with authorization :)',
     })
 })
-// mapping through folder routes and adding routes from map
-readdirSync('./routes').map((route) =>
-    app.use('/api', require('./routes/' + route))
-)
+
+// new method
+postRoutes(app)
+userRoutes(app)
+reactRoutes(app)
+uploadRoutes(app)
 
 //DATABASE
 mongoose
     .connect(process.env.DATABASE_URL, {
+        // @ts-ignore
         useNewUrlParser: true,
     })
     .then(() => console.log('Database connected successfully'))
     .catch((err) => console.log('Error connecting to mongoDB', err))
 
 const port = process.env.PORT || 8800
+// @ts-ignore
 app.listen(port, '0.0.0.0', () => {
     console.log(`Server is listening on port: ${port}...`)
 })

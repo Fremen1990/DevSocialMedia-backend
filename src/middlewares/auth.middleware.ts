@@ -1,6 +1,6 @@
-const jwt = require('jsonwebtoken')
+import jwt from 'jsonwebtoken'
 
-exports.authUser = async (req, res, next) => {
+export const authUser = async (req, res, next) => {
     try {
         let tmp = req.header('Authorization')
         const token = tmp ? tmp.slice(7, tmp.length) : null

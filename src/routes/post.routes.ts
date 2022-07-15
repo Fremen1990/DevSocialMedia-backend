@@ -1,3 +1,5 @@
+import { Express } from 'express'
+
 import { authUser } from '../middlewares/auth.middleware'
 import {
     comment,
@@ -7,7 +9,7 @@ import {
     savePost,
 } from '../controllers/post.controllers'
 
-export default function postRoutes(app) {
+export default function postRoutes(app: Express) {
     app.post('/api/createPost', authUser, createPost)
     app.get('/api/getAllPosts', authUser, getAllPosts)
     app.put('/api/comment', authUser, comment)

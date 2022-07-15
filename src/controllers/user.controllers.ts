@@ -1,3 +1,4 @@
+import { Request, Response } from 'express'
 import mongoose from 'mongoose'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
@@ -14,7 +15,7 @@ import { generateToken } from '../helpers/tokens'
 import { sendVerificationEmailHelper, sendResetCode } from '../helpers/mailer'
 import { generateCode } from '../helpers/generateCode'
 
-export const register = async (req, res) => {
+export const register = async (req: Request, res: Response) => {
     try {
         const {
             first_name,
@@ -99,7 +100,6 @@ export const register = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-
 export const activateAccount = async (req, res) => {
     try {
         const validUser = req.user.id
@@ -133,8 +133,7 @@ export const activateAccount = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-
-export const login = async (req, res) => {
+export const login = async (req: Request, res) => {
     try {
         const { email, password } = req.body
         const user = await User.findOne({ email })
@@ -168,8 +167,7 @@ export const login = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-
-export const getAllUsers = async (req, res) => {
+export const getAllUsers = async (req: Request, res) => {
     try {
         const users = await User.find().select(
             'username first_name last_name picture'
@@ -184,7 +182,6 @@ export const getAllUsers = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-
 export const sendVerificationEmail = async (req, res) => {
     try {
         const id = req.user.id
@@ -207,8 +204,7 @@ export const sendVerificationEmail = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-
-export const findUser = async (req, res) => {
+export const findUser = async (req: Request, res) => {
     try {
         const { email } = req.body
         const user = await User.findOne({ email }).select('-password')
@@ -223,8 +219,7 @@ export const findUser = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-
-export const sendResetPasswordCode = async (req, res) => {
+export const sendResetPasswordCode = async (req: Request, res) => {
     try {
         const { email } = req.body
         const user = await User.findOne({ email }).select('-password')
@@ -242,7 +237,7 @@ export const sendResetPasswordCode = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-export const validateResetCode = async (req, res) => {
+export const validateResetCode = async (req: Request, res) => {
     try {
         const { email, code } = req.body
         const user = await User.findOne({ email })
@@ -257,7 +252,7 @@ export const validateResetCode = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-export const changePassword = async (req, res) => {
+export const changePassword = async (req: Request, res) => {
     try {
         const { email, password } = req.body
 
@@ -278,7 +273,8 @@ export const changePassword = async (req, res) => {
 export const getProfile = async (req, res) => {
     try {
         const { username } = req.params
-        const user = await User.findById(req.user.id)
+        // TODO  Prepare useSchema interfaces to replacy 'any' types
+        const user: any = await User.findById(req.user.id)
         const profile = await User.findOne({ username }).select('-password')
         const friendship = {
             friends: false,
@@ -363,11 +359,12 @@ export const updateDetails = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-export const addFriend = async (req, res) => {
+export const addFriend = async (req: any, res) => {
     try {
         if (req.user.id !== req.params.id) {
-            const sender = await User.findById(req.user.id)
-            const receiver = await User.findById(req.params.id)
+            // TODO  Prepare sender and receiver interfaces to replacy 'any' types
+            const sender: any = await User.findById(req.user.id)
+            const receiver: any = await User.findById(req.params.id)
             if (
                 !receiver.requests.includes(sender._id) &&
                 !receiver.friends.includes(sender._id)
@@ -397,8 +394,8 @@ export const addFriend = async (req, res) => {
 export const cancelRequest = async (req, res) => {
     try {
         if (req.user.id !== req.params.id) {
-            const sender = await User.findById(req.user.id)
-            const receiver = await User.findById(req.params.id)
+            const sender: any = await User.findById(req.user.id)
+            const receiver: any = await User.findById(req.params.id)
             if (
                 receiver.requests.includes(sender._id) &&
                 !receiver.friends.includes(sender._id)
@@ -428,8 +425,8 @@ export const cancelRequest = async (req, res) => {
 export const follow = async (req, res) => {
     try {
         if (req.user.id !== req.params.id) {
-            const sender = await User.findById(req.user.id)
-            const receiver = await User.findById(req.params.id)
+            const sender: any = await User.findById(req.user.id)
+            const receiver: any = await User.findById(req.params.id)
             if (
                 !receiver.followers.includes(sender._id) &&
                 !sender.following.includes(receiver._id)
@@ -457,8 +454,8 @@ export const follow = async (req, res) => {
 export const unfollow = async (req, res) => {
     try {
         if (req.user.id !== req.params.id) {
-            const sender = await User.findById(req.user.id)
-            const receiver = await User.findById(req.params.id)
+            const sender: any = await User.findById(req.user.id)
+            const receiver: any = await User.findById(req.params.id)
             if (
                 receiver.followers.includes(sender._id) &&
                 sender.following.includes(receiver._id)
@@ -488,8 +485,8 @@ export const unfollow = async (req, res) => {
 export const acceptRequest = async (req, res) => {
     try {
         if (req.user.id !== req.params.id) {
-            const receiver = await User.findById(req.user.id)
-            const sender = await User.findById(req.params.id)
+            const receiver: any = await User.findById(req.user.id)
+            const sender: any = await User.findById(req.params.id)
             if (receiver.requests.includes(sender._id)) {
                 await receiver.update({
                     $push: { friends: sender._id, following: sender._id },
@@ -516,8 +513,8 @@ export const acceptRequest = async (req, res) => {
 export const unfriend = async (req, res) => {
     try {
         if (req.user.id !== req.params.id) {
-            const sender = await User.findById(req.user.id)
-            const receiver = await User.findById(req.params.id)
+            const sender: any = await User.findById(req.user.id)
+            const receiver: any = await User.findById(req.params.id)
             if (
                 receiver.friends.includes(sender._id) &&
                 sender.friends.includes(receiver._id)
@@ -553,8 +550,8 @@ export const unfriend = async (req, res) => {
 export const deleteRequest = async (req, res) => {
     try {
         if (req.user.id !== req.params.id) {
-            const receiver = await User.findById(req.user.id)
-            const sender = await User.findById(req.params.id)
+            const receiver: any = await User.findById(req.user.id)
+            const sender: any = await User.findById(req.params.id)
             if (receiver.requests.includes(sender._id)) {
                 await receiver.update({
                     $pull: {
@@ -595,7 +592,7 @@ export const search = async (req, res) => {
 export const addToSearchHistory = async (req, res) => {
     try {
         const { searchUser } = req.body
-        const search = {
+        const search: any = {
             user: searchUser,
             createdAt: new Date(),
         }

@@ -1,3 +1,5 @@
+import { Express } from 'express'
+
 import {
     acceptRequest,
     activateAccount,
@@ -27,7 +29,7 @@ import {
 } from '../controllers/user.controllers'
 import { authUser } from '../middlewares/auth.middleware'
 
-export default function userRoutes(app) {
+export default function userRoutes(app: Express) {
     app.post('/api/auth', authUser)
     app.post('/api/register', register)
     app.post('/api/activate', authUser, activateAccount)

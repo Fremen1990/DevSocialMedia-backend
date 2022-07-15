@@ -1,7 +1,8 @@
+import { Request, Response } from 'express'
 import Post from '../models/Post.model'
 import User from '../models/User.model'
 
-export const createPost = async (req, res) => {
+export const createPost = async (req: Request, res: Response) => {
     try {
         const post = await new Post(req.body).save()
         await post.populate(
@@ -13,8 +14,8 @@ export const createPost = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-export const getAllPosts = async (req, res) => {
-    console.log('req user id', req.user.id)
+
+export const getAllPosts = async (req, res: Response) => {
     try {
         //Based on following users
         const followingTemp = await User.findById(req.user.id).select(
@@ -51,10 +52,10 @@ export const getAllPosts = async (req, res) => {
     }
 }
 
-export const comment = async (req, res) => {
+export const comment = async (req, res: Response) => {
     try {
         const { comment, image, postId } = req.body
-        let newComments = await Post.findByIdAndUpdate(
+        let newComments: any = await Post.findByIdAndUpdate(
             postId,
             {
                 $push: {
@@ -62,6 +63,7 @@ export const comment = async (req, res) => {
                         comment: comment,
                         image: image,
                         commentBy: req.user.id,
+                        // @ts-ignore todo find proper type
                         commentAt: new Date(),
                     },
                 },
@@ -79,7 +81,7 @@ export const comment = async (req, res) => {
     }
 }
 
-export const savePost = async (req, res) => {
+export const savePost = async (req, res: Response) => {
     try {
         const postId = req.params.id
         const user = await User.findById(req.user.id)
@@ -101,6 +103,7 @@ export const savePost = async (req, res) => {
                 $push: {
                     savedPosts: {
                         post: postId,
+                        // @ts-ignore todo find proper type
                         savedAt: new Date(),
                     },
                 },
@@ -111,7 +114,7 @@ export const savePost = async (req, res) => {
     }
 }
 
-export const deletePost = async (req, res) => {
+export const deletePost = async (req: Request, res: Response) => {
     try {
         await Post.findByIdAndRemove(req.params.id)
         res.json({ status: 'ok' })

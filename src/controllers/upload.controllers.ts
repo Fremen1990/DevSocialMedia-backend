@@ -1,3 +1,4 @@
+import { Response } from 'express'
 import { getTempFilename } from 'express-fileupload/lib/utilities.js'
 import fs from 'fs'
 import cloudinary from 'cloudinary'
@@ -9,7 +10,7 @@ cloudinary.config({
     api_secret: process.env.CLOUD_API_SECRET,
 })
 
-export const uploadImages = async (req, res) => {
+export const uploadImages = async (req, res: Response) => {
     try {
         const { path } = req.body
         console.log('PATH', path)

@@ -1,8 +1,10 @@
+import { Response } from 'express'
+
 import mongoose from 'mongoose'
 import User from '../models/User.model'
 import React from '../models/React.model'
 
-export const reactPost = async (req, res) => {
+export const reactPost = async (req, res: Response) => {
     try {
         const { postId, react } = req.body
         const check = await React.findOne({
@@ -31,7 +33,7 @@ export const reactPost = async (req, res) => {
     }
 }
 
-export const getReacts = async (req, res) => {
+export const getReacts = async (req, res: Response) => {
     try {
         const reactsArray = await React.find({ postRef: req.params.id })
 

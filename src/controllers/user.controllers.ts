@@ -14,6 +14,7 @@ import { generateToken } from '../helpers/tokens'
 
 import { sendVerificationEmailHelper, sendResetCode } from '../helpers/mailer'
 import { generateCode } from '../helpers/generateCode'
+import config from 'config'
 
 export const register = async (req: Request, res: Response) => {
     try {
@@ -82,7 +83,8 @@ export const register = async (req: Request, res: Response) => {
         )
 
         //verification url for new user
-        const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}`
+        const BASE_URL = config.get<string>('base_url')
+        const url = `${BASE_URL}/activate/${emailVerificationToken}`
         sendVerificationEmailHelper(user.email, user.first_name, url)
         const token = generateToken({ id: user._id.toString() }, '7d')
 
@@ -104,7 +106,8 @@ export const activateAccount = async (req, res) => {
     try {
         const validUser = req.user.id
         const { token } = req.body
-        const user = jwt.verify(token, process.env.TOKEN_SECRET)
+        const TOKEN_SECRET = config.get<string>('token_secret')
+        const user = jwt.verify(token, TOKEN_SECRET)
         // @ts-ignore
         const check = await User.findById(user.id)
 
@@ -195,7 +198,8 @@ export const sendVerificationEmail = async (req, res) => {
             { id: user._id.toString() },
             '30m'
         )
-        const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}`
+        const BASE_URL = config.get<string>('base_url')
+        const url = `${BASE_URL}/activate/${emailVerificationToken}`
         sendVerificationEmailHelper(user.email, user.first_name, url)
         return res
             .status(200)

@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken'
+import config from 'config'
 
 export const authUser = async (req, res, next) => {
     try {
@@ -7,7 +8,8 @@ export const authUser = async (req, res, next) => {
         if (!token) {
             return res.status(500).json({ message: 'Invalid Authentication' })
         }
-        jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
+        const token_secret = config.get<string>('token_secret')
+        jwt.verify(token, token_secret, (err, user) => {
             if (err) {
                 return res
                     .status(500)

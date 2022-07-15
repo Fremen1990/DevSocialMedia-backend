@@ -1,9 +1,18 @@
 import nodemailer from 'nodemailer'
 import { google } from 'googleapis'
+import config from 'config'
 
 const { OAuth2 } = google.auth
 const oauth_link = 'https://developers.google.com/oauthplayground'
-const { EMAIL, MAILING_ID, MAILING_REFRESH, MAILING_SECRET } = process.env
+
+// old env package
+// const { EMAIL, MAILING_ID, MAILING_REFRESH, MAILING_SECRET } = process.env
+
+// new config package with types
+const EMAIL = config.get<string>('email')
+const MAILING_ID = config.get<string>('mailing_id')
+const MAILING_REFRESH = config.get<string>('mailing_refresh')
+const MAILING_SECRET = config.get<string>('mailing_secret')
 
 // !!! YOU HAVE TO PASS IN ORDER: ID -> SECRET -> REFRESH !!!!
 // @ts-ignore

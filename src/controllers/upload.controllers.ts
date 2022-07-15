@@ -2,12 +2,13 @@ import { Response } from 'express'
 import { getTempFilename } from 'express-fileupload/lib/utilities.js'
 import fs from 'fs'
 import cloudinary from 'cloudinary'
+import config from 'config'
 
 // @ts-ignore
 cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME,
-    api_key: process.env.CLOUD_API_KEY,
-    api_secret: process.env.CLOUD_API_SECRET,
+    cloud_name: config.get<string>('cloud_name'),
+    api_key: config.get<number>('cloud_api_key'),
+    api_secret: config.get<string>('cloud_api_secret'),
 })
 
 export const uploadImages = async (req, res: Response) => {

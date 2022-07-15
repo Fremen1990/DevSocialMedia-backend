@@ -1,6 +1,5 @@
 import express from 'express'
 import cors from 'cors'
-import 'dotenv/config'
 import fileUpload from 'express-fileupload'
 import { stringify } from 'querystring'
 import connectDB from './utils/connectDB'

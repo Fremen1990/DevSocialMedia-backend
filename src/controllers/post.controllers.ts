@@ -1,7 +1,8 @@
-const Post = require('../models/Post')
-const User = require('../models/User')
+import { Request, Response } from 'express'
+import Post from '../models/Post.model'
+import User from '../models/User.model'
 
-exports.createPost = async (req, res) => {
+export const createPost = async (req: Request, res: Response) => {
     try {
         const post = await new Post(req.body).save()
         await post.populate(
@@ -13,7 +14,8 @@ exports.createPost = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-exports.getAllPosts = async (req, res) => {
+
+export const getAllPosts = async (req, res: Response) => {
     try {
         //Based on following users
         const followingTemp = await User.findById(req.user.id).select(
@@ -41,7 +43,8 @@ exports.getAllPosts = async (req, res) => {
             .limit(10)
         followingPosts.push(...[...userPosts])
         followingPosts.sort((a, b) => {
-            return b.createdAt - a.createdAt
+            // @ts-ignore
+            return a.createdAt - b.createdAt
         })
         res.json(followingPosts)
     } catch (error) {
@@ -49,10 +52,10 @@ exports.getAllPosts = async (req, res) => {
     }
 }
 
-exports.comment = async (req, res) => {
+export const comment = async (req, res: Response) => {
     try {
         const { comment, image, postId } = req.body
-        let newComments = await Post.findByIdAndUpdate(
+        let newComments: any = await Post.findByIdAndUpdate(
             postId,
             {
                 $push: {
@@ -60,6 +63,7 @@ exports.comment = async (req, res) => {
                         comment: comment,
                         image: image,
                         commentBy: req.user.id,
+                        // @ts-ignore todo find proper type
                         commentAt: new Date(),
                     },
                 },
@@ -77,17 +81,19 @@ exports.comment = async (req, res) => {
     }
 }
 
-exports.savePost = async (req, res) => {
+export const savePost = async (req, res: Response) => {
     try {
         const postId = req.params.id
         const user = await User.findById(req.user.id)
         const check = user?.savedPosts.find(
+            // @ts-ignore
             (post) => post.post.toString() === postId
         )
         if (check) {
             await User.findByIdAndUpdate(req.user.id, {
                 $pull: {
                     savedPosts: {
+                        // @ts-ignore
                         _id: check._id,
                     },
                 },
@@ -97,6 +103,7 @@ exports.savePost = async (req, res) => {
                 $push: {
                     savedPosts: {
                         post: postId,
+                        // @ts-ignore todo find proper type
                         savedAt: new Date(),
                     },
                 },
@@ -107,7 +114,7 @@ exports.savePost = async (req, res) => {
     }
 }
 
-exports.deletePost = async (req, res) => {
+export const deletePost = async (req: Request, res: Response) => {
     try {
         await Post.findByIdAndRemove(req.params.id)
         res.json({ status: 'ok' })

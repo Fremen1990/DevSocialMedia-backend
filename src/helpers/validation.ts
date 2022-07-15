@@ -1,19 +1,19 @@
-const User = require('../models/User')
+import User from '../models/User.model'
 
-exports.validateEmail = (email) => {
+export const validateEmail = (email) => {
     return String(email)
         .toLowerCase()
         .match(/^([a-z\d\.-]+)@([a-z\d-]+)\.([a-z]{2,12})(\.[a-z]{2,12})?$/)
 }
 
-exports.validateLength = (text, min, max) => {
+export const validateLength = (text, min, max) => {
     if (text.length > max || text.length < min) {
         return false
     }
     return true
 }
 
-exports.validateUsername = async (username) => {
+export const validateUsername = async (username) => {
     let flag = false
     do {
         let check = await User.findOne({ username })

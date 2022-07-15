@@ -1,12 +1,15 @@
-const React = require('../models/React')
-const mongoose = require('mongoose')
-const User = require('../models/User')
+import { Response } from 'express'
 
-exports.reactPost = async (req, res) => {
+import mongoose from 'mongoose'
+import User from '../models/User.model'
+import React from '../models/React.model'
+
+export const reactPost = async (req, res: Response) => {
     try {
         const { postId, react } = req.body
         const check = await React.findOne({
             postRef: postId,
+            // @ts-ignore
             reactBy: mongoose.Types.ObjectId(req.user.id),
         })
         if (check === null) {
@@ -30,7 +33,7 @@ exports.reactPost = async (req, res) => {
     }
 }
 
-exports.getReacts = async (req, res) => {
+export const getReacts = async (req, res: Response) => {
     try {
         const reactsArray = await React.find({ postRef: req.params.id })
 
@@ -49,26 +52,32 @@ exports.getReacts = async (req, res) => {
         const reacts = [
             {
                 react: 'like',
+                // @ts-ignore
                 count: newReacts.like ? newReacts.like.length : 0,
             },
             {
                 react: 'love',
+                // @ts-ignore
                 count: newReacts.love ? newReacts.love.length : 0,
             },
             {
                 react: 'haha',
+                // @ts-ignore
                 count: newReacts.haha ? newReacts.haha.length : 0,
             },
             {
                 react: 'sad',
+                // @ts-ignore
                 count: newReacts.sad ? newReacts.sad.length : 0,
             },
             {
                 react: 'wow',
+                // @ts-ignore
                 count: newReacts.wow ? newReacts.wow.length : 0,
             },
             {
                 react: 'angry',
+                // @ts-ignore
                 count: newReacts.angry ? newReacts.angry.length : 0,
             },
         ]
@@ -79,12 +88,14 @@ exports.getReacts = async (req, res) => {
         })
         const user = await User.findById(req.user.id)
         const checkSaved = user?.savedPosts.find(
+            // @ts-ignore
             (x) => x.post.toString() === req.params.id
         )
         res.json({
             reacts,
             check: check?.react,
             total: reactsArray.length,
+            // @ts-ignore
             checkSaved: checkSaved ? true : false,
         })
     } catch (error) {

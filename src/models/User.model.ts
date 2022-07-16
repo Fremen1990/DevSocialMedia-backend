@@ -1,9 +1,14 @@
-import mongoose from 'mongoose'
+import mongoose, {Schema,} from 'mongoose'
+import {UserData} from "../types/User.model.types";
 
-// @ts-ignore
-const { ObjectId } = mongoose.Schema
 
-const userSchema = new mongoose.Schema(
+export interface UserDocument extends UserData, mongoose.Document {
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+
+const userSchema = new mongoose.Schema<UserDocument>(
     {
         first_name: {
             type: String,
@@ -64,32 +69,32 @@ const userSchema = new mongoose.Schema(
         },
         friends: [
             {
-                type: ObjectId,
+                type: Schema.Types.ObjectId,
                 ref: 'User',
             },
         ],
         following: [
             {
-                type: ObjectId,
+                type: Schema.Types.ObjectId,
                 ref: 'User',
             },
         ],
         followers: [
             {
-                type: ObjectId,
+                type: Schema.Types.ObjectId,
                 ref: 'User',
             },
         ],
         requests: [
             {
-                type: ObjectId,
+                type: Schema.Types.ObjectId,
                 ref: 'User',
             },
         ],
         search: [
             {
                 user: {
-                    type: ObjectId,
+                    type: Schema.Types.ObjectId,
                     ref: 'User',
                     required: true,
                 },
@@ -141,7 +146,7 @@ const userSchema = new mongoose.Schema(
         savedPosts: [
             {
                 post: {
-                    type: ObjectId,
+                    type: Schema.Types.ObjectId,
                     ref: 'Post',
                 },
                 savedAt: {
@@ -151,7 +156,7 @@ const userSchema = new mongoose.Schema(
             },
         ],
     },
-    { timestamps: true }
+    {timestamps: true}
 )
 
-export default mongoose.model('User', userSchema)
+export default mongoose.model<UserDocument>('User', userSchema)

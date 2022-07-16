@@ -1,22 +1,21 @@
-import mongoose from 'mongoose'
+import mongoose, {Schema} from 'mongoose'
+import {React} from "../types/React.model.types";
 
-// @ts-ignore
-const { ObjectId } = mongoose.Schema
 
-const reactSchema = new mongoose.Schema({
+const reactSchema = new mongoose.Schema<React>({
     react: {
         type: String,
         enum: ['like', 'love', 'haha', 'sad', 'angry', 'wow'],
         required: true,
     },
     postRef: {
-        type: ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Post',
     },
     reactBy: {
-        type: ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'User',
     },
 })
 
-export default mongoose.model('React', reactSchema)
+export default mongoose.model<React>('React', reactSchema)

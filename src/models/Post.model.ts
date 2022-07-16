@@ -1,28 +1,6 @@
-import mongoose, {Document, Schema, Types} from 'mongoose'
+import mongoose, {Schema} from 'mongoose'
+import {Post} from "../types/Post.model.types";
 
-
-export enum PostTypeEnum {
-    PROFILE = 'profilePicture',
-    COVER = 'coverPicture',
-    NULL = "null"
-}
-
-export interface CommentsData {
-    comment: string,
-    image: string,
-    commentBy: Types.ObjectId,
-    commentAt: Date
-}
-
-export interface Post extends Document {
-    postId: string,
-    type: PostTypeEnum,
-    text: string,
-    images: [string],
-    user: Types.ObjectId,
-    background: string,
-    comments: [CommentsData],
-}
 
 export interface PostDocument extends Post, mongoose.Document {
     createdAt: Date;

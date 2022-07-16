@@ -1,10 +1,6 @@
-import mongoose, {Document, Schema, Types} from 'mongoose'
+import mongoose, {Schema} from 'mongoose'
+import {Code} from "../types/Code.model.types";
 
-
-export interface Code extends Document {
-    code: string,
-    user: Types.ObjectId
-}
 
 const codeSchema = new mongoose.Schema<Code>({
     code: {

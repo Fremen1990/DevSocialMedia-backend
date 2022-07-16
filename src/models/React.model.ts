@@ -1,20 +1,5 @@
-import mongoose, {Document, Schema, Types} from 'mongoose'
-
-
-export enum ReactsEnum {
-    LIKE = 'like',
-    LOVE = 'love',
-    HAHA = 'haha',
-    SAD = 'sad',
-    ANGRY = 'angry',
-    WOW = 'wow'
-}
-
-export interface React extends Document {
-    react: ReactsEnum
-    postRef: Types.ObjectId
-    reactBy: Types.ObjectId
-}
+import mongoose, {Schema} from 'mongoose'
+import {React} from "../types/React.model.types";
 
 
 const reactSchema = new mongoose.Schema<React>({

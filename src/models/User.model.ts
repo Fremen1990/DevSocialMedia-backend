@@ -1,9 +1,66 @@
-import mongoose from 'mongoose'
+import mongoose, {Document, Schema, Types} from 'mongoose'
 
-// @ts-ignore
-const { ObjectId } = mongoose.Schema
 
-const userSchema = new mongoose.Schema(
+export interface UserData extends Document {
+    first_name: string,
+    last_name: string,
+    username: string,
+    email: string,
+    password: string,
+    picture: string,
+    cover: string,
+    gender: string,
+    bYear: number,
+    bMonth: number,
+    verified: boolean,
+    friends: Types.ObjectId,
+    following: Types.ObjectId,
+    followers: Types.ObjectId,
+    requests: Types.ObjectId,
+    search: SearchData[],
+    details: DetailsData[],
+    savedPosts: savedPostsData[]
+}
+
+export interface SearchData extends Document {
+    user: Types.ObjectId,
+    createdAt: Date
+}
+
+export enum RelEnum {
+    'Single',
+    'In a relationship',
+    'Married',
+    'Divorced',
+    'Programmer',
+}
+
+export interface DetailsData extends Document {
+    bio: string,
+    otherName: string,
+    type: string,
+    job: string,
+    workplace: string,
+    highSchool: string,
+    college: string,
+    currentCity: string,
+    hometown: string,
+    relationship: RelEnum,
+    instagram: string,
+}
+
+export interface savedPostsData extends Document {
+    post: Types.ObjectId,
+    savedAt: Date
+}
+
+export interface UserDocument extends UserData, mongoose.Document {
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+
+const userSchema = new mongoose.Schema<UserDocument>(
     {
         first_name: {
             type: String,
@@ -64,32 +121,32 @@ const userSchema = new mongoose.Schema(
         },
         friends: [
             {
-                type: ObjectId,
+                type: Schema.Types.ObjectId,
                 ref: 'User',
             },
         ],
         following: [
             {
-                type: ObjectId,
+                type: Schema.Types.ObjectId,
                 ref: 'User',
             },
         ],
         followers: [
             {
-                type: ObjectId,
+                type: Schema.Types.ObjectId,
                 ref: 'User',
             },
         ],
         requests: [
             {
-                type: ObjectId,
+                type: Schema.Types.ObjectId,
                 ref: 'User',
             },
         ],
         search: [
             {
                 user: {
-                    type: ObjectId,
+                    type: Schema.Types.ObjectId,
                     ref: 'User',
                     required: true,
                 },
@@ -141,7 +198,7 @@ const userSchema = new mongoose.Schema(
         savedPosts: [
             {
                 post: {
-                    type: ObjectId,
+                    type: Schema.Types.ObjectId,
                     ref: 'Post',
                 },
                 savedAt: {
@@ -151,7 +208,7 @@ const userSchema = new mongoose.Schema(
             },
         ],
     },
-    { timestamps: true }
+    {timestamps: true}
 )
 
-export default mongoose.model('User', userSchema)
+export default mongoose.model<UserDocument>('User', userSchema)

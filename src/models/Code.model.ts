@@ -1,18 +1,21 @@
-import mongoose from 'mongoose'
+import mongoose, {Document, Schema, Types} from 'mongoose'
 
-// @ts-ignore
-const { ObjectId } = mongoose.Schema
 
-const codeSchema = new mongoose.Schema({
+export interface Code extends Document {
+    code: string,
+    user: Types.ObjectId
+}
+
+const codeSchema = new mongoose.Schema<Code>({
     code: {
         type: String,
         required: true,
     },
     user: {
-        type: ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'User',
         required: true,
     },
 })
 
-export default mongoose.model('Code', codeSchema)
+export default mongoose.model<Code>('Code', codeSchema)

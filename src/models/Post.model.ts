@@ -1,9 +1,27 @@
-import mongoose from 'mongoose'
+import mongoose, {Document, Schema, Types} from 'mongoose'
 
-// @ts-ignore
-const { ObjectId } = mongoose.Schema
 
-const postSchema = new mongoose.Schema(
+export enum PostTypeEnum {
+    PROFILE = 'profilePicture',
+    COVER = 'coverPicture',
+    NULL = "null"
+}
+
+export interface Post extends Document {
+    type: PostTypeEnum,
+    text: string,
+    images: [],
+    user: Types.ObjectId,
+    background: string,
+    comments: Object[],
+}
+
+export interface PostDocument extends Post, mongoose.Document {
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+const postSchema = new mongoose.Schema<PostDocument>(
     {
         type: {
             type: String,
@@ -13,11 +31,12 @@ const postSchema = new mongoose.Schema(
         text: {
             type: String,
         },
+        // @ts-ignore
         images: {
             type: Array,
         },
         user: {
-            type: ObjectId,
+            type: Schema.Types.ObjectId,
             ref: 'User',
             required: true,
         },
@@ -33,7 +52,7 @@ const postSchema = new mongoose.Schema(
                     type: String,
                 },
                 commentBy: {
-                    type: ObjectId,
+                    type: Schema.Types.ObjectId,
                     ref: 'User',
                 },
                 commentAt: {
@@ -48,4 +67,4 @@ const postSchema = new mongoose.Schema(
     }
 )
 
-export default mongoose.model('Post', postSchema)
+export default mongoose.model<PostDocument>('Post', postSchema)

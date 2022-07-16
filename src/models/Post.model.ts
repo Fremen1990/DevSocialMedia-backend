@@ -7,13 +7,21 @@ export enum PostTypeEnum {
     NULL = "null"
 }
 
+export interface CommentsData {
+    comment: string,
+    image: string,
+    commentBy: Types.ObjectId,
+    commentAt: Date
+}
+
 export interface Post extends Document {
+    postId: string,
     type: PostTypeEnum,
     text: string,
-    images: [],
+    images: [string],
     user: Types.ObjectId,
     background: string,
-    comments: Object[],
+    comments: [CommentsData],
 }
 
 export interface PostDocument extends Post, mongoose.Document {

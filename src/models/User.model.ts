@@ -13,13 +13,13 @@ export interface UserData extends Document {
     bYear: number,
     bMonth: number,
     verified: boolean,
-    friends: Types.ObjectId,
-    following: Types.ObjectId,
-    followers: Types.ObjectId,
-    requests: Types.ObjectId,
-    search: SearchData[],
+    friends: [Types.ObjectId], /*| [string]*/
+    following: [Types.ObjectId],
+    followers: [Types.ObjectId],
+    requests: [Types.ObjectId] /* [string],*/
+    search: [SearchData],
     details: DetailsData[],
-    savedPosts: savedPostsData[]
+    savedPosts: [savedPostsData]
 }
 
 export interface SearchData extends Document {

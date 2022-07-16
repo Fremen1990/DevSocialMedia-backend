@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import {Request, Response} from 'express'
 import Post from '../models/Post.model'
 import User from '../models/User.model'
 
@@ -11,7 +11,7 @@ export const createPost = async (req: Request, res: Response) => {
         )
         res.json(post)
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).json({message: error.message})
     }
 }
 
@@ -23,23 +23,23 @@ export const getAllPosts = async (req, res: Response) => {
         )
         const following = followingTemp.following
         const promises = following.map((user) => {
-            return Post.find({ user: user })
+            return Post.find({user: user})
                 .populate('user', 'first_name last_name picture username cover')
                 .populate(
                     'comments.commentBy',
                     'first_name last_name picture username'
                 )
-                .sort({ createdAt: -1 })
+                .sort({createdAt: -1})
                 .limit(10)
         })
         const followingPosts = await (await Promise.all(promises)).flat()
-        const userPosts = await Post.find({ user: req.user.id })
+        const userPosts = await Post.find({user: req.user.id})
             .populate('user', 'first_name last_name picture username cover')
             .populate(
                 'comments.commentBy',
                 'first_name last_name picture username'
             )
-            .sort({ createdAt: -1 })
+            .sort({createdAt: -1})
             .limit(10)
         followingPosts.push(...[...userPosts])
         followingPosts.sort((a, b) => {
@@ -48,13 +48,13 @@ export const getAllPosts = async (req, res: Response) => {
         })
         res.json(followingPosts)
     } catch (error) {
-        return res.status(500).json({ message: error.message })
+        return res.status(500).json({message: error.message})
     }
 }
 
 export const comment = async (req, res: Response) => {
     try {
-        const { comment, image, postId } = req.body
+        const {comment, image, postId} = req.body
         let newComments: any = await Post.findByIdAndUpdate(
             postId,
             {
@@ -77,7 +77,7 @@ export const comment = async (req, res: Response) => {
         )
         res.json(newComments.comments)
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).json({message: error.message})
     }
 }
 
@@ -86,14 +86,12 @@ export const savePost = async (req, res: Response) => {
         const postId = req.params.id
         const user = await User.findById(req.user.id)
         const check = user?.savedPosts.find(
-            // @ts-ignore
             (post) => post.post.toString() === postId
         )
         if (check) {
             await User.findByIdAndUpdate(req.user.id, {
                 $pull: {
                     savedPosts: {
-                        // @ts-ignore
                         _id: check._id,
                     },
                 },
@@ -101,6 +99,7 @@ export const savePost = async (req, res: Response) => {
         } else {
             await User.findByIdAndUpdate(req.user.id, {
                 $push: {
+                    // @ts-ignore
                     savedPosts: {
                         post: postId,
                         // @ts-ignore todo find proper type
@@ -110,15 +109,15 @@ export const savePost = async (req, res: Response) => {
             })
         }
     } catch (error) {
-        return res.status(500).json({ message: error.message })
+        return res.status(500).json({message: error.message})
     }
 }
 
 export const deletePost = async (req: Request, res: Response) => {
     try {
         await Post.findByIdAndRemove(req.params.id)
-        res.json({ status: 'ok' })
+        res.json({status: 'ok'})
     } catch (error) {
-        return res.status(500).json({ message: error.message })
+        return res.status(500).json({message: error.message})
     }
 }

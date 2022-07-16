@@ -1,10 +1,12 @@
+import {Express} from 'express'
+
 import homeRoutes from './home.routes'
 import userRoutes from './user.routes'
 import postRoutes from './post.routes'
 import reactRoutes from './react.routes'
 import uploadRoutes from './upload.routes'
 
-export default function routes(app) {
+export default function routes(app: Express) {
     homeRoutes(app)
     userRoutes(app)
     postRoutes(app)
